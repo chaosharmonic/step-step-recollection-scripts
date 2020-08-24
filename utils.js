@@ -36,6 +36,8 @@ export const getSectionProps = (section) => splitSectionProps(section)
 export const [headerProps, chartProps] = [header, chart]
   .map(section => getSectionProps(section))
 
+// Edit below this line to use with custom song packs
+
 const constructRelease = (title, releaseDate, scale = 'DDR', numPanels = 4, releaseType = 'arcade') => (
   { title, releaseDate, scale, numPanels, releaseType }
 )
