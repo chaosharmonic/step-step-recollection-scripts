@@ -1,5 +1,9 @@
-export const outputPath = './Output/'
-export const inputPath = './Input/'
+import { config } from 'https://deno.land/x/dotenv/mod.ts'
+
+export const expressURL = config().EXPRESS_URL
+
+export const outputPath = './Output'
+export const inputPath = './Input'
 export const readSimfile = (target) => {
   const decoder = new TextDecoder('utf-8')
   const raw = Deno.readFileSync(target)

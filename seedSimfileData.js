@@ -1,7 +1,6 @@
 import { readJsonSync } from 'https://deno.land/std@v0.64.0/fs/mod.ts'
-import { allArcade } from './utils.js'
+import { allArcadeReleases, outputPath, expressURL } from './utils.js'
 
-const expressURL = 'http://localhost:3030'
 const baseURL = `${expressURL}/api`
 
 export const seedData = async (route, body) => {
@@ -32,7 +31,9 @@ const seed = async (release) => {
 
   console.log(`Seeded release: ${releaseResponse}`)
 
-  const songs = readJsonSync(`./Output/JSON/${release.title}.json`)
+  // NOTE: this is the directory scrapeSimfiles saves to,
+  //   hence the use of output rather than input here
+  const songs = readJsonSync(`./${outputPath}/JSON/${release.title}.json`)
 
   const releaseId = releaseResponse._id
 
@@ -51,7 +52,7 @@ const seed = async (release) => {
       }))
       return { ...song, title, titletranslit, release: releaseId, length: 0, charts }
     })
-  // TODO: get length from acoompanying audio tracks
+  // TODO: get length from accompanying audio tracks
 
   for (const entry of data) {
     const body = {
@@ -64,6 +65,6 @@ const seed = async (release) => {
   }
 }
 
-for (const release of allArcade) {
+for (const release of allArcadeReleases) {
   seed(release)
 }
