@@ -29,7 +29,7 @@ const updateChartLevels = ({ title, release, charts }) => {
     }))
 
   // loop over existing charts, making relevant updates
-  const outputCharts = simfile.split('//')
+  const outputCharts = inputCharts.split('//')
     .slice(1)
     .map(rawChart => {
       //  get line with difficulty
@@ -57,7 +57,7 @@ const updateChartLevels = ({ title, release, charts }) => {
       return rawChart.replace(oldMeter, newMeter)
     })
 
-  const header = simfile.split('//')[0]
+  const header = inputCharts.split('//')[0]
 
   return [header, ...outputCharts].join('//')
 }
