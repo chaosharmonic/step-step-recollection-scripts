@@ -21,7 +21,7 @@ const convertHeader = (inputFile) => {
   // minHeader will copy fields with values only
   // fullHeader will copy template.ssc and insert values
   const minHeader = createHeader(minHeaderProps)
-  const fullHeader = createHeader(headerProps)
+  // const fullHeader = createHeader(headerProps)
 
   const header = minHeader
 
@@ -37,6 +37,7 @@ const convertCharts = (inputFile) => {
   ]
 
   const rawChartData = inputFile
+    .replace(/,\n\n/g, ',\n')
     .split('\n\n')
     .slice(1)
 
@@ -77,13 +78,12 @@ const convertCharts = (inputFile) => {
 
 const convertSMToSSC = (source) => {
   const sim = readSimfile(source)
-    .replace(/\n\n/g, '\n')
-    .replace(/#NOTEDATA:;/g, '')
-    .replace(/#NOTES\n/g, '\n')
-    .replace(/:\n0000/g, '\n0000')
     .split('\n')
     .filter(text => !text.startsWith('//'))
-    .map(text => text.trim())
+    .map(text => {
+      if (text.includes('//')) text = text.split('//')[0]
+      return text.trim()
+    })
     .join('\n')
 
   const header = convertHeader(sim)
@@ -102,8 +102,8 @@ const sanitizeSimfiles = (release) => {
 
   const exts = ['.sm', '.ssc']
   for (const { name, path } of walkSync(directory, { exts })) {
-    const parentDir = name.replace(/.(sm|ssc)/, '')
-    const filename = name.replace('.sm', '.ssc')
+    const parentDir = name.replace(/.(sm|ssc)$/, '')
+    const filename = name.replace(/.sm$/, '.ssc')
     const outputFile = convertSMToSSC(path)
     const targetPath = `./Output/Simfiles/${release}/${parentDir}`
     ensureDirSync(targetPath)
