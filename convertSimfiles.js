@@ -20,12 +20,16 @@ const convertHeader = (inputFile) => {
 
   const minHeaderProps = Object.keys(inputVals)
 
+  const useFullHeader = false
+
   // minHeader will copy fields with values only
   // fullHeader will copy template.ssc and insert values
   const minHeader = generateHeader(minHeaderProps)
-  // const fullHeader = generateHeader(headerProps)
+  const fullHeader = generateHeader(headerProps)
 
-  const header = minHeader
+  const header = useFullHeader
+    ? fullHeader
+    : minHeader
 
   return header
 }
