@@ -95,7 +95,7 @@ const convertSMToSSC = (source) => {
     .filter(text => !text.startsWith('//')) // remove comment lines
     .map(text => {
       if (text.includes('//')) text = text.split('//')[0] // strip measure labels
-      return text.trim() // remove leading/trailing blank space
+      return text.trim()
     })
     .join('\n')
 
@@ -105,7 +105,7 @@ const convertSMToSSC = (source) => {
   return [header, ...charts].join('\n\n')
     .split('\n')
     .map(line => line.includes('=')
-      ? line.replace(/,/g, ',\n') // one bpm change, stop, etc. per line
+      ? line.replace(/,/g, ',\n') // display one bpm change, stop, etc. per line
       : line)
     .join('\n')
 }
