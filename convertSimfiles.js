@@ -1,4 +1,4 @@
-import { walkSync, ensureDirSync } from 'https://deno.land/std@v0.64.0/fs/mod.ts'
+import { walk, ensureDir } from 'https://deno.land/std@v0.64.0/fs/mod.ts'
 import { headerProps, getSectionProps, readSimfile, allArcadeReleases } from './utils.js'
 
 const convertHeader = (inputFile) => {
@@ -43,7 +43,10 @@ const convertCharts = (inputFile) => {
   ]
 
   const rawChartData = inputFile
+    .replace(/;\n#NOTE/g, ';\n\n#NOTE') // force double space between charts
+    .replace(/:\n0000/g, ':\n\n0000') // force double space between props and steps
     .replace(/,\n\n/g, ',\n') // remove double space between measures
+    .replace(/,\n;/g, ';') // remove trailing comma from chart
     .split('\n\n') // separate text blocks
     .slice(1) // filter out song metadata
 
@@ -94,7 +97,10 @@ const convertSMToSSC = (source) => {
     .split('\n')
     .filter(text => !text.startsWith('//')) // remove comment lines
     .map(text => {
-      if (text.includes('//')) text = text.split('//')[0] // strip measure labels
+      if (text.includes('//')) {
+        text = text.split('//')[0] // strip measure labels
+          .concat('\n')
+      }
       return text.trim()
     })
     .join('\n')
@@ -110,24 +116,25 @@ const convertSMToSSC = (source) => {
     .join('\n')
 }
 
-const sanitizeSimfiles = (release) => {
+const sanitizeSimfiles = async (release) => {
   const directory = `./Input/Simfiles/${release}`
 
   const exts = ['.sm', '.ssc']
-  for (const { name, path } of walkSync(directory, { exts })) {
+  for await (const { name, path } of walk(directory, { exts })) {
     const parentDir = name.replace(/.(sm|ssc)$/, '')
     const filename = name.replace(/.sm$/, '.ssc')
     const outputFile = convertSMToSSC(path)
     const targetPath = `./Output/Simfiles/${release}/${parentDir}`
-    ensureDirSync(targetPath)
+    await ensureDir(targetPath)
 
     console.log(`writing to ${targetPath}/${filename}`)
-    Deno.writeTextFile(`${targetPath}/${filename}`, outputFile)
+    await Deno.writeTextFile(`${targetPath}/${filename}`, outputFile)
   }
 }
 
 for (const { title } of allArcadeReleases) {
   console.log(`parsing release: ${title}...`)
-  sanitizeSimfiles(title)
-  console.log('success!')
+  await sanitizeSimfiles(title)
 }
+
+console.log('success!')
