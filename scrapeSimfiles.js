@@ -1,11 +1,11 @@
-import { walkSync, writeJson, ensureDirSync } from 'https://deno.land/std@v0.64.0/fs/mod.ts'
-import { outputPath, readSimfile, allArcadeReleases } from './utils'
+import { walk, writeJson, ensureDir } from 'https://deno.land/std@v0.64.0/fs/mod.ts'
+import { outputPath, readSimfile, allArcadeReleases } from './utils.js'
 
-const scrapeSimfiles = (release) => {
+const scrapeSimfiles = async (release) => {
   const directory = `${outputPath}/Simfiles/${release}`
   const songs = []
 
-  for (const entry of walkSync(directory, { exts: ['.sm', '.ssc'] })) {
+  for await (const entry of walk(directory, { exts: ['.sm', '.ssc'] })) {
     const sim = readSimfile(entry.path)
 
     let {
@@ -122,8 +122,9 @@ const getChartData = (simfile) => simfile
   })
 
 for (const { title } of allArcadeReleases) {
-  ensureDirSync(title)
+  await ensureDir('./Output/JSON')
   console.log(`parsing release: ${title}...`)
-  writeJson(`./Output/JSON/${title}.json`, scrapeSimfiles(title))
+  const data = await scrapeSimfiles(title)
+  await writeJson(`./Output/JSON/${title}.json`, data)
   console.log('success!')
 }
