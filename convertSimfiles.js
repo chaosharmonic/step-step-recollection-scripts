@@ -1,4 +1,4 @@
-import { walk, ensureDir } from 'https://deno.land/std@v0.64.0/fs/mod.ts'
+import { walk, ensureDir } from 'https://deno.land/std@v0.74.0/fs/mod.ts'
 import { headerProps, getSectionProps, readSimfile, allArcadeReleases } from './utils.js'
 
 const formatHeader = (inputFile) => {

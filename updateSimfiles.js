@@ -1,4 +1,4 @@
-import { walkSync, ensureDirSync } from 'https://deno.land/std@v0.64.0/fs/mod.ts'
+import { walkSync, ensureDirSync } from 'https://deno.land/std@v0.74.0/fs/mod.ts'
 import { inputPath, outputPath, readSimfile } from './utils'
 
 // TODO: write this output to a file, to enable saving conversion data between scales
