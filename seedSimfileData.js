@@ -1,4 +1,4 @@
-import { readJson } from 'https://deno.land/std@v0.64.0/fs/mod.ts'
+import { readJson } from 'https://deno.land/x/jsonfile/mod.ts'
 import { allArcadeReleases, outputPath, expressURL } from './utils.js'
 
 const baseURL = `${expressURL}/api`

@@ -1,4 +1,5 @@
-import { walk, writeJson, ensureDir } from 'https://deno.land/std@v0.64.0/fs/mod.ts'
+import { walk, ensureDir } from 'https://deno.land/std@v0.64.0/fs/mod.ts'
+import { writeJson } from 'https://deno.land/x/jsonfile/mod.ts'
 import { outputPath, readSimfile, allArcadeReleases } from './utils.js'
 
 const scrapeSimfiles = async (release) => {
