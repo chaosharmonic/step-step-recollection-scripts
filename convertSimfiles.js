@@ -1,7 +1,7 @@
 import { walk, ensureDir } from 'https://deno.land/std@v0.64.0/fs/mod.ts'
 import { headerProps, getSectionProps, readSimfile, allArcadeReleases } from './utils.js'
 
-const convertHeader = (inputFile) => {
+const formatHeader = (inputFile) => {
   const inputHeader = inputFile.split('\n\n')[0] // get song metadata
   const inputProps = getSectionProps(inputHeader) // convert metadata to objects
     .filter(prop => typeof (prop) !== 'string') // remove blank properties
@@ -34,9 +34,11 @@ const convertHeader = (inputFile) => {
   return header
 }
 
-const convertCharts = (inputFile) => {
+const formatCharts = (inputFile) => {
+  const isSSC = inputFile.includes('STEPSTYPE') // get input file format
   const fields = [
     '#STEPSTYPE',
+    '#CHARTSTYLE',
     '#DIFFICULTY',
     '#METER',
     '#RADARVALUES'
@@ -51,44 +53,59 @@ const convertCharts = (inputFile) => {
     .slice(1) // filter out song metadata
 
   const chartProps = rawChartData
-    .filter(text => !text.includes('0000'))
-
+    .filter(text => !text.includes('0000') && (!isSSC || text !== '#NOTES:'))
+    
+    
   const chartValues = rawChartData
-    .filter(text => text.includes('0000'))
+  .filter(text => text.includes('0000'))
+  
 
-  const hasChartProps = inputFile.includes('STEPSTYPE') // get input file format
-
-  const output = chartProps.map(prop => {
+  const outputProps = chartProps.map(chart => {
     // split block into individual lines, stripping out boilerplate
-    const propValues = `${prop}\n`
-      .replace(/(:|;)\n/g, 'SPLIT')
-      .split('SPLIT')
-      .filter(line => line && (!line.includes('NOTE')))
+    const propValues = isSSC
+      ? chart
+        .split(';\n')
+        .filter(line => line && line.startsWith('#') && !line.includes('NOTE'))
+      : chart
+        .split('\n')
+        .filter(line => line && (!line.includes('NOTE')))
+        .map(line => line.replace (/:$/, ''))
 
-    // if SSC-fomratted, get value only
+    const getSSCProp = (propName, targetArr = propValues) => {
+      const result = targetArr.find(prop => prop.includes(propName))
+      return result && result.split(':')[1].replace(';', '')
+    }
+
+    // if SSC-formatted, get value only
     //   else, get whole line
-    const stepstype = hasChartProps
-      ? propValues[0]
-        .split(':')[1]
+    const stepsType = isSSC
+      ? getSSCProp('#STEPSTYPE')
       : propValues[0]
 
-    // if SSC-fomratted, return whole line
-    //   else, concat value to relevant field
-    const data = propValues.map((value, index) => hasChartProps
-      ? `${value};`
-      : `${fields[index]}:${value};`)
+    const propData = propValues.map((value, index) => {
+      if (!value) return null
 
+      return isSSC
+      ? `${value};`
+      : `${fields[index]}:${value};`
+    }).filter(prop => prop)
+
+    const chartStyle = getSSCProp('CHARTSTYLE', propData)
+
+    // const chartStyle = null
+    const dividerText = chartStyle
+      ? `${stepsType} - ${chartStyle}`
+      : stepsType
     const divider =
-      `//---------------${stepstype}-----------------`
+      `//---------------${dividerText}-----------------`
 
     // wrap chart metadata w boilerplate lines and divider
-    return [divider, '#NOTEDATA:;', ...data, '#NOTES:']
+    return [divider, '#NOTEDATA:;', ...propData, '#NOTES:']
       .join('\n')
-      .replace('\n\n', '\n')
   })
 
   // concat chart metadata and corresponding notes
-  return output.map((props, index) => [props, chartValues[index]]
+  return outputProps.map((props, index) => [props, chartValues[index]]
     .join('\n\n'))
 }
 
@@ -105,10 +122,12 @@ const convertSMToSSC = (source) => {
     })
     .join('\n')
 
-  const header = convertHeader(sim)
-  const charts = convertCharts(sim)
+  const header = formatHeader(sim)
+  const charts = formatCharts(sim)
 
   return [header, ...charts].join('\n\n')
+    .replace(/;;/g, ';') // cleanup punctuation
+    .replace(/\n\n#/g, '\n#') //remove double space from each chart header
     .split('\n')
     .map(line => line.includes('=')
       ? line.replace(/,/g, ',\n') // display one bpm change, stop, etc. per line
