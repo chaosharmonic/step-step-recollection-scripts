@@ -95,8 +95,11 @@ const getChartData = (simfile) => simfile
   .replace('hard', 'expert')
   .split('//')
   .slice(1)
-  // defaults to 4-panel charts. Remove the below line to edit this.
-  .filter(e => e.includes('dance') && !e.includes('solo') && !e.includes('couple'))
+  // defaults to 4-panel arcade charts. Remove the below line to edit this.
+  .filter(e => e.includes('dance')
+    && !e.includes('solo') // 6 panel single
+    && !e.includes('couple') // 6 panel double
+    && !e.includes('chartstyle')) // filter out chart edits
   .map(chart => {
     const data = chart
       .split('\n')
