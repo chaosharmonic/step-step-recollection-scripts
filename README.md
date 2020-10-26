@@ -9,12 +9,12 @@ Includes tools for batch operations such as:
 * Exporting simfile metadata to JSON
 * Uploading extracted metadata to an API
 
-This is a companion project to [Step Step Recollection](https://github.com/chaosharmonic/step-step-recollection), a workout tracker for rhythm games. At its core, it was built as a seeding tool (the rest mostly aided with data consistency), but I'll be circling back to it periodically as I continue fleshing out the main project's data model.
+This is a companion project to [Step Step Recollection](https://github.com/chaosharmonic/step-step-recollection), a workout tracker for rhythm games. At its core, it was built as a seeding tool (the rest mostly aided with data consistency), but I'll be circling back to it periodically as I continue fleshing out the mai n project's data model.
 
 ## Installation and Usage
 
 * Download this repo to your local system using `git clone` and `cd` into the project folder
-* Install Deno locally with the pacakge manager of your choice. All other dependencies are imported using ES modules and will load on first run.
+* Install Deno locally with the package manager of your choice. All other dependencies are imported using ES modules and will load on first run.
 * Move any simfiles you want to edit or scrape into the `/Input/Simfiles` path.
     * The `utils.js` file includes an initial dataset containing a collection of releases, with each entry's title corresponding to a top-level folder in your simfiles path. In addition to walking through these directories, the data is also used to seed releases and generate output paths.
 * To manipulate files:
@@ -22,7 +22,7 @@ This is a companion project to [Step Step Recollection](https://github.com/chaos
     * The `--unstable` flag is currently required because of Deno's fs module. You should be able to remove it once this is resolved upstream.
 * To use the seeder:
     * Create a `.env` file from the included `.env-example`, filling in the `EXPRESS_URL` field with the URL of your API.
-    * Replace the `allow-write` flag with `allow-net`
+    * Run using `deno run --allow-read --allow-net seedSimfileData.js`
 
 ## Additional notes
 
