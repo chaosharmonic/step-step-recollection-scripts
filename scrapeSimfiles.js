@@ -48,8 +48,6 @@ const scrapeSimfiles = async (release) => {
       titletranslit,
       subtitletranslit,
       artisttranslit,
-      displaybpm,
-      bpms,
       stops
     }
     data.charts = getChartData(sim)
