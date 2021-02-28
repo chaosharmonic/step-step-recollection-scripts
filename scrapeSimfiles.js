@@ -65,16 +65,18 @@ const scrapeSimfiles = async (release) => {
 
 const getSimfileData = (text) => text
   .split('//')[0]
-  .replace(/#/g, '')
-  .split('\n')
-  .map(prop => {
-    const [propKey, propValue] = prop
-      .trim()
-      .replace(/;/, '')
-      .replace(':', '!!!')
-      .split('!!!')
-    // split only the first separator in line
-    // (displaybpm also uses it in place of a hyphen)
+    .split('\n')
+    .map(prop => {
+      const [propKey, propValue] = prop
+        .trim()
+        .replace(';', '') // strip trailing semicolon from prop value
+        .replace(':\\', ':') // strip leading escape character from prop value
+        .replace('#', '') // strip leading hash sign from prop name
+        .replace(' #', '!!!') // split at any trailing comments
+        .replace(':', '!!!') // split between prop name and value
+          // note: displaybpm also uses a colon rather than a hyphen,
+          // so split at the first colon only
+        .split('!!!')
       .filter((e, i, a) =>
         e && a.length > 1)
       .map((e, i, a) => a[i - 1] === 'DISPLAYBPM'
