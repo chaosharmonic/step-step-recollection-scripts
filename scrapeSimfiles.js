@@ -1,4 +1,4 @@
-import { walk, ensureDir } from 'https://deno.land/std@v0.74.0/fs/mod.ts'
+import { walk, ensureDir } from 'https://deno.land/std@0.74.0/fs/mod.ts'
 import { writeJson } from 'https://deno.land/x/jsonfile/mod.ts'
 import { outputPath, readSimfile, allArcadeReleases } from './utils.js'
 
@@ -94,8 +94,8 @@ const getChartData = (simfile) => simfile
   .replace(/;/g, '')
   // conversion between DDR and stepmania chart naming conventions
   .toLowerCase()
-  .replace('medium', 'difficult')
-  .replace('hard', 'expert')
+  .replace(/medium/g, 'difficult')
+  .replace(/hard/g, 'expert')
   .split('//')
   .slice(1)
   // defaults to 4-panel arcade charts. Remove the below line to edit this.
