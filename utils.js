@@ -1,4 +1,4 @@
-import { config } from 'https://deno.land/x/dotenv/mod.ts'
+import { config } from 'dotenv/mod.ts'
 
 export const expressURL = config().EXPRESS_URL
 

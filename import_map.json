@@ -1,0 +1,7 @@
+{
+    "imports": {
+       "fs/": "https://deno.land/std@0.88.0/fs/",
+       "jsonfile/": "https://deno.land/x/jsonfile/",
+       "dotenv/": "https://deno.land/x/dotenv/"
+    }
+ }
