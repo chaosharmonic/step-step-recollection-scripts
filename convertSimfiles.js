@@ -1,5 +1,5 @@
 import { walk, ensureDir } from 'fs/mod.ts'
-import { headerProps, getSectionProps, readSimfile, allArcadeReleases } from './utils.js'
+import { headerProps, getSectionProps, readSimfile, allArcadeAlbums } from './utils.js'
 
 const formatHeader = (inputFile) => {
   const inputHeader = inputFile.split('\n\n')[0] // get song metadata
@@ -135,15 +135,15 @@ const convertSMToSSC = (source) => {
     .join('\n')
 }
 
-const sanitizeSimfiles = async (release) => {
-  const directory = `./Input/Simfiles/${release}`
+const sanitizeSimfiles = async (album) => {
+  const directory = `./Input/Simfiles/${album}`
 
   const exts = ['.sm', '.ssc']
   for await (const { name, path } of walk(directory, { exts })) {
     const parentDir = name.replace(/.(sm|ssc)$/, '')
     const filename = name.replace(/.sm$/, '.ssc')
     const outputFile = convertSMToSSC(path)
-    const targetPath = `./Output/Simfiles/${release}/${parentDir}`
+    const targetPath = `./Output/Simfiles/${album}/${parentDir}`
     await ensureDir(targetPath)
 
     console.log(`writing to ${targetPath}/${filename}`)
@@ -151,8 +151,8 @@ const sanitizeSimfiles = async (release) => {
   }
 }
 
-for (const { title } of allArcadeReleases) {
-  console.log(`parsing release: ${title}...`)
+for (const { title } of allArcadeAlbums) {
+  console.log(`parsing album: ${title}...`)
   await sanitizeSimfiles(title)
 }
 

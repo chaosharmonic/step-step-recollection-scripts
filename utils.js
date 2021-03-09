@@ -38,13 +38,13 @@ export const [headerProps, chartProps] = [header, chart]
 
 // Edit below this line to use with custom song packs
 
-const constructRelease = (title, releaseDate, scale = 'DDR', numPanels = 4, releaseType = 'arcade') => (
-  { title, releaseDate, scale, numPanels, releaseType }
+const constructAlbum = (title, releaseDate, scale = 'DDR', numPanels = 4, albumType = 'arcade') => (
+  { title, releaseDate, scale, numPanels, albumType }
 )
 
-const constructXScaleRelease = (title, releaseDate) => constructRelease(title, releaseDate, 'DDR X')
+const constructXScaleAlbum = (title, releaseDate) => constructAlbum(title, releaseDate, 'DDR X')
 
-export const originalScaleReleases = [
+export const originalScaleAlbums = [
   { title: 'Dance Dance Revolution', releaseDate: '1998-09-26' },
   { title: 'Dance Dance Revolution 2ndMIX', releaseDate: '1999-01-19' },
   { title: 'Dance Dance Revolution 2ndMIX LINK Version', releaseDate: '1999-04-28' },
@@ -60,9 +60,9 @@ export const originalScaleReleases = [
   { title: 'Dance Dance Revolution EXTREME', releaseDate: '2002-12-25' },
   { title: 'Dance Dance Revolution SuperNOVA', releaseDate: '2006-07-12' },
   { title: 'Dance Dance Revolution SuperNOVA2', releaseDate: '2007-08-22' }
-].map(({ title, releaseDate }) => constructRelease(title, new Date(releaseDate)))
+].map(({ title, releaseDate }) => constructAlbum(title, new Date(releaseDate)))
 
-export const xScaleReleases = [
+export const xScaleAlbums = [
   { title: 'X', releaseDate: '2008-12-24' },
   { title: 'X2', releaseDate: '2010-07-07' },
   { title: 'X3 vs 2ndMIX', releaseDate: '2011-11-16' },
@@ -73,6 +73,6 @@ export const xScaleReleases = [
   // { title: 'A20 Plus', releaseDate: '2020-07-01' }
 ]
   .map(({ title, releaseDate }) =>
-    constructXScaleRelease(`DanceDanceRevolution ${title}`, new Date(releaseDate)))
+    constructXScaleAlbum(`DanceDanceRevolution ${title}`, new Date(releaseDate)))
 
-export const allArcadeReleases = [...originalScaleReleases, ...xScaleReleases]
+export const allArcadeAlbums = [...originalScaleAlbums, ...xScaleAlbums]

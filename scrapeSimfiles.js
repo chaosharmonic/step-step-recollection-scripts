@@ -1,6 +1,6 @@
 import { walk, ensureDir } from 'fs/mod.ts'
 import { writeJson } from 'jsonfile/mod.ts'
-import { outputPath, readSimfile, allArcadeReleases } from './utils.js'
+import { outputPath, readSimfile, allArcadeAlbums } from './utils.js'
 
 const scrapeSimfiles = async (release) => {
   const directory = `${outputPath}/Simfiles/${release}`
@@ -125,7 +125,7 @@ const getChartData = (simfile) => simfile
     return { numPads, numPanels, difficulty, level }
   })
 
-for (const { title } of allArcadeReleases) {
+for (const { title } of allArcadeAlbums) {
   await ensureDir('./Output/JSON')
   console.log(`parsing release: ${title}...`)
   const data = await scrapeSimfiles(title)

@@ -1,5 +1,5 @@
 import { readJson } from 'jsonfile/mod.ts'
-import { allArcadeReleases, outputPath, expressURL } from './utils.js'
+import { allArcadeAlbums, outputPath, expressURL } from './utils.js'
 
 const baseURL = `${expressURL}/api`
 
@@ -18,24 +18,24 @@ export const seedData = async (route, body) => {
   return data
 }
 
-const seedRelease = (body) => seedData('release', body)
+const seedAlbum = (body) => seedData('album', body)
 const seedSong = (body) => seedData('song', body)
 
-const seed = async (release) => {
-  const releaseResponse = await seedRelease({ payload: release })
+const seed = async (album) => {
+  const albumResponse = await seedAlbum({ payload: album })
 
-  if (!releaseResponse._id) {
-    console.log(releaseResponse)
+  if (!albumResponse._id) {
+    console.log(albumResponse)
     return null
   }
 
-  console.log(`Seeded release: ${releaseResponse.title}`)
+  console.log(`Seeded album: ${albumResponse.title}`)
 
   // NOTE: this is the directory scrapeSimfiles saves to,
   //   hence the use of output rather than input here
-  const songs = await readJson(`./${outputPath}/JSON/${release.title}.json`)
+  const songs = await readJson(`./${outputPath}/JSON/${album.title}.json`)
 
-  const releaseId = releaseResponse._id
+  const albumId = albumResponse._id
 
   const data = songs
     .map(song => {
@@ -50,13 +50,13 @@ const seed = async (release) => {
           .replace('medium', 'difficult')
           .replace('hard', 'expert')
       }))
-      return { ...song, title, titletranslit, release: releaseId, length: 0, charts }
+      return { ...song, title, titletranslit, album: albumId, length: 0, charts }
     })
   // TODO: get length from accompanying audio tracks
 
   for (const entry of data) {
     const body = {
-      payload: { ...entry, release: releaseId }
+      payload: { ...entry, album: albumId }
     }
     const songResponse = await seedSong(body)
     songResponse._id
@@ -65,6 +65,6 @@ const seed = async (release) => {
   }
 }
 
-for (const release of allArcadeReleases) {
-  await seed(release)
+for (const album of allArcadeAlbums) {
+  await seed(album)
 }

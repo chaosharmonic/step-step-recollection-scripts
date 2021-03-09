@@ -3,7 +3,7 @@ import { inputPath, outputPath, readSimfile } from './utils'
 
 // TODO: write this output to a file, to enable saving conversion data between scales
 //   (DDR to DDR X, etc.)
-const generateChartDiff = (title, release, charts, newScale = null) => {
+const generateChartDiff = (title, album, charts, newScale = null) => {
   const keys = Object.keys(charts)
   const newCharts = Object.values(charts).map((chart, index) => {
     if (!chart) return chart
@@ -14,10 +14,10 @@ const generateChartDiff = (title, release, charts, newScale = null) => {
 
     return { difficulty, style, oldVal, newVal }
   }).filter(e => e)
-  return { title, release, charts: newCharts }
+  return { title, album, charts: newCharts }
 }
 
-const updateChartLevels = ({ title, release, charts }) => {
+const updateChartLevels = ({ title, album, charts }) => {
   const inputCharts = charts
     .map(e => ({
       ...e,
@@ -65,7 +65,7 @@ const updateChartLevels = ({ title, release, charts }) => {
 const dataset = [
   // sample song format: {
   //   title: 'MAX 300',
-  //   release: 'DDRMAX -Dance Dance Revolution 6thMIX-',
+  //   album: 'DDRMAX -Dance Dance Revolution 6thMIX-',
   //   charts: [
   //     [3, 5],
   //     [6, 9],
@@ -78,7 +78,7 @@ const dataset = [
   //     null
   //   ]
   // }
-].map(({ title, release, charts }) => {
+].map(({ title, album, charts }) => {
   // data props for generateChartDiff -
   //   which will then map over charts array above,
   //   converting them to key-value pairs
@@ -101,15 +101,15 @@ const dataset = [
       return { [prop]: e }
     }).reduce((a, b) => ({ ...a, ...b }))
 
-  return generateChartDiff(title, release, data)
+  return generateChartDiff(title, album, data)
 })
 
-const target = new Set([...dataset.map(e => e.release)])
+const target = new Set([...dataset.map(e => e.album)])
 
-for (const release of target) {
-  const directory = `${inputPath}/Simfiles/${release}`
+for (const album of target) {
+  const directory = `${inputPath}/Simfiles/${album}`
   for (const { name, path } of walkSync(directory, { exts: ['.ssc', '.sm'] })) {
-    const targetPath = `${outputPath}/Simfiles/${release}`
+    const targetPath = `${outputPath}/Simfiles/${album}`
     ensureDirSync(targetPath)
 
     console.log(`writing to ${path}`)
