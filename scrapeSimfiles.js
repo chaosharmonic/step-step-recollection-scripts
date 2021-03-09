@@ -129,6 +129,14 @@ for (const { title } of allArcadeReleases) {
   await ensureDir('./Output/JSON')
   console.log(`parsing release: ${title}...`)
   const data = await scrapeSimfiles(title)
-  await writeJson(`./Output/JSON/${title}.json`, data)
+  
+  const sorted = data.sort((a, b) => {
+    let [a_sort, b_sort] = [a, b]
+      .map(e => (e.titletranslit || e.title).toLowerCase())
+
+    return a_sort > b_sort ? 1 : -1
+  })
+  
+  await writeJson(`./Output/JSON/${title}.json`, sorted)
   console.log('success!')
 }
